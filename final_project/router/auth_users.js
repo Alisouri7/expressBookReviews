@@ -23,7 +23,7 @@ const authenticatedUser = (username, password) => { //returns boolean
   let validUsers = users.filter((user) => {
     return (user.username === username && user.password === password)
   })
-  if ( validUsers.length > 0) {
+  if (validUsers.length > 0) {
     return true
   } else {
     return false
@@ -40,7 +40,7 @@ regd_users.post("/login", (req, res) => {
   if (authenticatedUser(username, password)) {
     let accessToken = jwt.sign({
       data: password
-    }, 'access', {expiresIn: 60 * 60})
+    }, 'access', { expiresIn: 60 * 60 })
 
     req.session.authorization = {
       accessToken, username
@@ -53,8 +53,12 @@ regd_users.post("/login", (req, res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  let username = req.session.authorization['username']
+  let isbn = req.params.isbn
+  let review = req.query.review
+  books[isbn].reviews[username] = review
+
+  return res.status(201).json({message: `user with username ${username} create/modify comment: ${review}`})
 });
 
 module.exports.authenticated = regd_users;
