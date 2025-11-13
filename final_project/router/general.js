@@ -62,13 +62,27 @@ public_users.get('/isbn/:isbn', function (req, res) {
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
-  const author = req.params.author
-  for (let i = 1; i < 11; i++) {
-    if (books[i].author === author) {
-      res.send(JSON.stringify(books[i]))
+  new Promise((resolve, reject) => {
+    if (req) {
+      resolve('promise fullfield')
+    } else {
+      reject('promise rejected')
     }
-  }
-  return res.status(404).send(JSON.stringify({ message: 'book doesnt exist in DB!' }))
+  })
+    .then((message) => {
+      console.log(message);
+      const author = req.params.author
+      for (let i = 1; i < 11; i++) {
+        if (books[i].author === author) {
+          res.status(200).send(JSON.stringify(books[i]))
+        }
+      }
+      return res.end()
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(404).json({ message: "get  book based on author in general module was failed." });
+    })
 });
 
 // Get all books based on title
