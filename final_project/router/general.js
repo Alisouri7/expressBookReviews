@@ -87,13 +87,27 @@ public_users.get('/author/:author', function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
-  const title = req.params.title
-  for (let i = 1; i < 11; i++) {
-    if (books[i].title === title) {
-      res.send(JSON.stringify(books[i]))
+  new Promise((resolve, reject) => {
+    if (req) {
+      resolve('promise fullfield')
+    } else {
+      reject('promise rejected')
     }
-  }
-  return res.status(404).send(JSON.stringify({ message: 'book doesnt exist in DB!' }))
+  })
+    .then((message) => {
+      console.log(message);
+      const title = req.params.title
+      for (let i = 1; i < 11; i++) {
+        if (books[i].title === title) {
+          res.status(200).send(JSON.stringify(books[i]))
+        }
+      }
+      return res.end()
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(404).json({ message: "get  book based on title in general module was failed." });
+    })
 });
 
 //  Get book review
