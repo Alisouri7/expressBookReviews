@@ -12,7 +12,7 @@ public_users.post("/register", (req, res) => {
     return res.status(404).json({ message: 'please enter username and/or password.' })
   }
   if (!isValid(username)) {
-    users.push({"username": username, "password": password})
+    users.push({ "username": username, "password": password })
     return res.status(201).json({ message: "User successfully registered. Now you can login" });
   } else {
     return res.status(404).json({ message: "User already exists!" });
@@ -20,10 +20,24 @@ public_users.post("/register", (req, res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/', function (req, res) {
-  res.send(JSON.stringify(books))
-  return res.status(200).json({ message: "get all books in general module was succcessfully done." });
-});
+public_users.get('/', (req, res) => {
+  new Promise((resolve, reject) => {
+    if (req) {
+      resolve('promise fullfield')
+    } else {
+      reject('promise rejected')
+    }
+  })
+    .then((message) => {
+      res.status(200).send(JSON.stringify(books))
+      console.log(message);
+      return res.end()
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(404).json({ message: "get all books in general module was failed." });
+    })
+})
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
