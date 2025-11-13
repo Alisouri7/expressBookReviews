@@ -41,9 +41,23 @@ public_users.get('/', (req, res) => {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
-  const isbn = req.params.isbn
-  res.send(JSON.stringify(books[isbn]))
-  return res.status(200).json({ message: "get books based on isbn in general module was succcessfully done." });
+  new Promise((resolve, reject) => {
+    if (req) {
+      resolve('promise fullfield')
+    } else {
+      reject('promise rejected')
+    }
+  })
+    .then((message) => {
+      console.log(message);
+      const isbn = req.params.isbn
+      res.status(200).send(JSON.stringify(books[isbn]))
+      return res.end()
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(404).json({ message: "get all books in general module was failed." });
+    })
 });
 
 // Get book details based on author
