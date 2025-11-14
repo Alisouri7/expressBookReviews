@@ -3,7 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-
+const axios = require('axios')
 
 public_users.post("/register", (req, res) => {
   const username = req.body.username
@@ -20,25 +20,17 @@ public_users.post("/register", (req, res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/', (req, res) => {
-  new Promise((resolve, reject) => {
-    if (req) {
-      resolve('promise fullfield')
-    } else {
-      reject('promise rejected')
-    }
-  })
-    .then((message) => {
-      res.status(200).send(JSON.stringify(books))
-      console.log(message);
-      return res.end()
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(404).json({ message: "get all books in general module was failed." });
-    })
+public_users.get('/', async (req, res) => {
+  try {
+    const response = await axios.get('http://localhost:5000/books')
+    res.status(200).json(response.data)
+  } catch (err) {
+    res.status(404).json({message: 'error in get book list', err: err});
+  }
 })
-
+public_users.get('/books', (req, res) => {
+  return res.send(books)
+})
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
   new Promise((resolve, reject) => {
