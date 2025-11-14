@@ -21,86 +21,65 @@ public_users.post("/register", (req, res) => {
 
 // Get the book list available in the shop
 public_users.get('/', async (req, res) => {
-  try {
-    const response = await axios.get('http://localhost:5000/books')
-    res.status(200).json(response.data)
-  } catch (err) {
-    res.status(404).json({message: 'error in get book list', err: err});
-  }
+    try {
+        const response = await axios.get('http://localhost:5000/books')
+        res.status(200).json(response.data)
+    } catch (err) {
+        res.status(404).json({ message: 'error in get book list', err: err });
+    }
 })
 public_users.get('/books', (req, res) => {
-  return res.send(books)
+    return res.send(books)
 })
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
-  new Promise((resolve, reject) => {
-    if (req) {
-      resolve('promise fullfield')
-    } else {
-      reject('promise rejected')
+public_users.get('/isbn/:isbn', async function (req, res) {
+    const isbn = req.params.isbn
+    try {
+        const response = await axios.get(`http://localhost:5000/isbn/${isbn}/books`)
+        res.status(200).json(response.data)
+    } catch (err) {
+        res.status(404).json({ message: 'error in get book', err: err });
     }
-  })
-    .then((message) => {
-      console.log(message);
-      const isbn = req.params.isbn
-      res.status(200).send(JSON.stringify(books[isbn]))
-      return res.end()
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(404).json({ message: "get all books in general module was failed." });
-    })
 });
-
+public_users.get('/isbn/:isbn/books', (req, res) => {
+    return res.send(books[req.params.isbn])
+})
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
-  new Promise((resolve, reject) => {
-    if (req) {
-      resolve('promise fullfield')
-    } else {
-      reject('promise rejected')
+public_users.get('/author/:author', async function (req, res) {
+    const author = req.params.author
+    try {
+        const response = await axios.get(`http://localhost:5000/author/${author}/books`)
+        res.status(200).json(response.data)
+    } catch (err) {
+        res.status(404).json({ message: 'error in get book', err: err });
     }
-  })
-    .then((message) => {
-      console.log(message);
-      const author = req.params.author
-      for (let i = 1; i < 11; i++) {
+});
+public_users.get('/author/:author/books', (req, res) => {
+    const author = req.params.author
+    for (let i = 1; i < 11; i++) {
         if (books[i].author === author) {
-          res.status(200).send(JSON.stringify(books[i]))
+            return res.status(200).send(books[i])
         }
-      }
-      return res.end()
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(404).json({ message: "get  book based on author in general module was failed." });
-    })
-});
-
-// Get all books based on title
-public_users.get('/title/:title', function (req, res) {
-  new Promise((resolve, reject) => {
-    if (req) {
-      resolve('promise fullfield')
-    } else {
-      reject('promise rejected')
     }
-  })
-    .then((message) => {
-      console.log(message);
-      const title = req.params.title
-      for (let i = 1; i < 11; i++) {
-        if (books[i].title === title) {
-          res.status(200).send(JSON.stringify(books[i]))
-        }
-      }
-      return res.end()
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(404).json({ message: "get  book based on title in general module was failed." });
-    })
+})
+// Get all books based on title
+public_users.get('/title/:title', async function (req, res) {
+    const title = req.params.title
+    try {
+        const response = await axios.get(`http://localhost:5000/title/${title}/books`)
+        res.status(200).json(response.data)
+    } catch (err) {
+        res.status(404).json({ message: 'error in get book', err: err });
+    }
 });
+public_users.get('/title/:title/books', (req, res) => {
+    const title = req.params.title
+    for (let i = 1; i < 11; i++) {
+        if (books[i].title === title) {
+            return res.status(200).send(books[i])
+        }
+    }
+})
 
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
